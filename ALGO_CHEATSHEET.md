@@ -32,6 +32,75 @@ func linearDP(nums []int) int {
 }
 ```
 
+### 🛠 代码模板 (树形 DP：双状态汇报)
+**核心直觉**：节点不仅返回最优解，还向父节点汇报“在不同决策下的多种可能”，由父节点进行组合。
+```go
+func dfs(node *TreeNode) []int {
+    if node == nil { return []int{0, 0} }
+    
+    left, right := dfs(node.Left), dfs(node.Right)
+    
+    // 状态 0: 不做当前动作； 状态 1: 做当前动作
+    status0 := max(left[0], left[1]) + max(right[0], right[1])
+    status1 := node.Val + left[0] + right[0]
+    
+    return []int{status0, status1}
+}
+```
+
+---
+
+## 8. 辅助数据结构模式
+### 💡 辅助栈 (Min Stack Pattern)
+**直觉模型**：**“保镖记小账”** —— 用一个额外的栈记录历史最值，保证查询 O(1)。
+**代表题**：[155] 最小栈
+
+### 🛠 代码模板 (按需入栈优化版)
+```go
+type MinStack struct {
+    stack, minStack []int
+}
+
+func (s *MinStack) Push(v int) {
+    s.stack = append(s.stack, v)
+    if len(s.minStack) == 0 || v <= s.minStack[len(s.minStack)-1] {
+        s.minStack = append(s.minStack, v)
+    }
+}
+
+func (s *MinStack) Pop() {
+    v := s.stack[len(s.stack)-1]
+    s.stack = s.stack[:len(s.stack)-1]
+    if v == s.minStack[len(s.minStack)-1] {
+        s.minStack = s.minStack[:len(s.minStack)-1]
+    }
+}
+```
+
+---
+
+## 7. 特殊数学/逻辑算法
+### 💡 摩尔投票法 (Boyer-Moore Voting)
+**直觉模型**：**“帮派混战”** —— 既然我的人数超过总数的一半，我跟其他任何帮派的人 1:1 同归于尽，最后剩下来的那个肯定是我。
+**代表题**：[169] 多数元素
+
+### 🛠 代码模板
+```go
+func majorityElement(nums []int) int {
+    candidate, count := 0, 0
+    for _, num := range nums {
+        if count == 0 {
+            candidate = num; count = 1
+        } else if num == candidate {
+            count++
+        } else {
+            count--
+        }
+    }
+    return candidate
+}
+```
+
 ---
 ### 🛠 代码模板
 ```go
