@@ -330,4 +330,55 @@ func (this *Trie) Search(word string) bool {
 ```
 
 ---
+
+## 9. 链表操作
+### 💡 哨兵节点 (Dummy Node Pattern)
+**直觉模型**：**"脚手架"** —— 搭建临时节点统一操作逻辑，最后拆掉返回真正的头。
+**代表题**：[21] 合并有序链表, [19] 删除倒数第N节点, [2] 两数相加
+
+### ⚠️ 核心陷阱
+- **dummy vs cur 分工**：dummy 是锚（永远指向链表头），cur 是针尖（始终指向最后一个节点）。
+  - 拼接 → `cur.Next`
+  - 取结果 → `dummy.Next`
+- **绝不碰 dummy 中间过程**：dummy 只出生一次、退场一次，中间全程旁观。
+
+### 🛠 代码模板 (合并有序链表)
+```go
+func mergeTwoLists(l1, l2 *ListNode) *ListNode {
+    dummy := &ListNode{}
+    cur := dummy
+    for l1 != nil && l2 != nil {
+        if l1.Val < l2.Val {
+            cur.Next = l1; l1 = l1.Next
+        } else {
+            cur.Next = l2; l2 = l2.Next
+        }
+        cur = cur.Next
+    }
+    if l1 != nil { cur.Next = l1 }
+    if l2 != nil { cur.Next = l2 }
+    return dummy.Next
+}
+```
+
+### 💡 链表反转 (Reverse Linked List)
+**直觉模型**：**"翻多米诺骨牌"** —— 三指针平推，逐个把箭头拧向 prev。
+**代表题**：[206] 反转链表
+
+### 🛠 代码模板 (三指针迭代)
+```go
+func reverseList(head *ListNode) *ListNode {
+    var prev *ListNode
+    curr := head
+    for curr != nil {
+        next := curr.Next  // 记住下家
+        curr.Next = prev   // 掰箭头
+        prev = curr        // 右移
+        curr = next
+    }
+    return prev
+}
+```
+
+---
 *保持更新，这是你的面试必杀技！*
