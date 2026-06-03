@@ -380,5 +380,71 @@ func reverseList(head *ListNode) *ListNode {
 }
 ```
 
+### 💡 快慢指针 (Fast & Slow / Floyd)
+**直觉模型**：**"操场跑步套圈"** —— 🐢1步🐰2步，有环则兔子必追尾乌龟。
+**代表题**：[141] 环形链表, [142] 环形链表 II
+
+### 🛠 代码模板 (判环 + 找入口)
+```go
+// 141: 只判环
+func hasCycle(head *ListNode) bool {
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
+        slow = slow.Next
+        fast = fast.Next.Next
+        if slow == fast { return true }
+    }
+    return false
+}
+
+// 142: 找环入口（两阶段）
+func detectCycle(head *ListNode) *ListNode {
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
+        slow, fast = slow.Next, fast.Next.Next
+        if slow == fast {
+            slow = head
+            for slow != fast {
+                slow, fast = slow.Next, fast.Next
+            }
+            return slow
+        }
+    }
+    return nil
+}
+```
+
+### 💡 双指针交叉走 (Two-pointer Crossover)
+**直觉模型**：**"我走过你走的路"** —— pA 走完 A 跳 B，pB 走完 B 跳 A，总路程相同。
+**代表题**：[160] 相交链表
+
+### 🛠 代码模板
+```go
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+    pA, pB := headA, headB
+    for pA != pB {
+        if pA == nil { pA = headB } else { pA = pA.Next }
+        if pB == nil { pB = headA } else { pB = pB.Next }
+    }
+    return pA  // 交点或 nil
+}
+```
+
+### 💡 倒数第 N 个节点 (Nth from End)
+**直觉模型**：**"n 格尺子量尾部"** —— 先拉开 n 格距离，平移至尾部。
+**代表题**：[19] 删除链表的倒数第 N 个结点
+
+### 🛠 代码模板 (双指针 + dummy)
+```go
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+    dummy := &ListNode{Next: head}
+    slow, fast := dummy, dummy
+    for i := 0; i < n; i++ { fast = fast.Next }
+    for fast.Next != nil { slow, fast = slow.Next, fast.Next }
+    slow.Next = slow.Next.Next
+    return dummy.Next
+}
+```
+
 ---
 *保持更新，这是你的面试必杀技！*
